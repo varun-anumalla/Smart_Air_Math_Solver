@@ -16,17 +16,17 @@ class Canvas:
 
         self.color = (0, 0, 255)
 
-        self.thickness = 3
+        self.thickness = 7
 
     def set_color(self, color):
 
         self.color = color
-        self.thickness = 3
+        self.thickness = 7
 
     def set_eraser(self):
 
         self.color = (0, 0, 0)
-        self.thickness = 20
+        self.thickness = 30
 
     def draw(self, x, y):
 

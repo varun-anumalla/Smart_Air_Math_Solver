@@ -69,7 +69,7 @@ while True:
     # HAND TRACKING
     frame, x, y, is_drawing = tracker.detect(frame)
 
-    # BUTTONS
+    # BUTTON SELECTION
     if x is not None and y is not None:
 
         if y < TOOLBAR_HEIGHT:
@@ -118,7 +118,18 @@ while True:
                     final_image
                 )
 
-                print(f"Saved: {filename}")
+                canvas_filename = (
+                    f"saved_drawings/drawing_{save_count}_canvas.png"
+                )
+
+                cv2.imwrite(
+                    canvas_filename,
+                    drawing
+                )
+
+                print(
+                    f"Saved: {filename}"
+                )
 
                 save_count += 1
 
