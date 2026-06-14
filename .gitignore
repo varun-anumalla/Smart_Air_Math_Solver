@@ -1,2 +1,5 @@
+saved_drawings/
+processed.png
+test_simple.py
 __pycache__/
-*.pyc
+.vscode/
