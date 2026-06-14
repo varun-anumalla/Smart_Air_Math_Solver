@@ -40,15 +40,38 @@ class HandTracker:
             hand = result.hand_landmarks[0]
 
             index_tip = hand[8]
-            index_pip = hand[6]
+            thumb_tip = hand[4]
 
-            is_drawing = index_tip.y < index_pip.y
+            distance = (
+                (index_tip.x - thumb_tip.x) ** 2 +
+                (index_tip.y - thumb_tip.y) ** 2
+            ) ** 0.5
+
+            is_drawing = distance > 0.08
 
             h, w, _ = frame.shape
 
             x = int(index_tip.x * w)
             y = int(index_tip.y * h)
 
-            cv2.circle(frame, (x, y), 10, (0, 0, 255), -1)
+            cv2.circle(
+                frame,
+                (x, y),
+                10,
+                (0, 0, 255),
+                -1
+            )
+
+            status = "DRAW" if is_drawing else "STOP"
+
+            cv2.putText(
+                frame,
+                status,
+                (20, 50),
+                cv2.FONT_HERSHEY_SIMPLEX,
+                1,
+                (0, 255, 0),
+                2
+            )
 
         return frame, x, y, is_drawing

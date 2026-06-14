@@ -14,6 +14,20 @@ class Canvas:
         self.prev_x = None
         self.prev_y = None
 
+        self.color = (0, 0, 255)
+
+        self.thickness = 3
+
+    def set_color(self, color):
+
+        self.color = color
+        self.thickness = 3
+
+    def set_eraser(self):
+
+        self.color = (0, 0, 0)
+        self.thickness = 20
+
     def draw(self, x, y):
 
         if self.prev_x is None:
@@ -26,8 +40,8 @@ class Canvas:
             self.canvas,
             (self.prev_x, self.prev_y),
             (x, y),
-            (255, 255, 255),
-            5
+            self.color,
+            self.thickness
         )
 
         self.prev_x = x
