@@ -4,11 +4,18 @@ class MathEvaluator:
 
         try:
 
-            expression = expression.replace(" ", "")
+            expression = expression.replace(
+                " ",
+                ""
+            )
 
-            answer = eval(expression)
+            answer = eval(
+                expression
+            )
 
-            return str(answer)
+            return str(
+                answer
+            )
 
         except:
 

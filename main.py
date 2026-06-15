@@ -15,6 +15,7 @@ ocr = OCREngine()
 evaluator = MathEvaluator()
 display = Display()
 
+expression = ""
 answer = ""
 
 os.makedirs("saved_drawings", exist_ok=True)
@@ -32,16 +33,19 @@ while True:
 
     frame = cv2.flip(frame, 1)
 
+    # ======================
     # TOOLBAR
+    # ======================
+
     buttons = [
-        ("RED", (0, 0, 255)),
-        ("GREEN", (0, 255, 0)),
-        ("BLUE", (255, 0, 0)),
-        ("YELLOW", (0, 255, 255)),
-        ("WHITE", (255, 255, 255)),
-        ("ERASER", (100, 100, 100)),
+        ("SOLVE", (150, 150, 150)),
         ("CLEAR", (50, 50, 50)),
-        ("SAVE", (150, 150, 150))
+        ("ERASER", (100, 100, 100)),
+        ("WHITE", (255, 255, 255)),
+        ("YELLOW", (0, 255, 255)),
+        ("BLUE", (255, 0, 0)),
+        ("GREEN", (0, 255, 0)),
+        ("RED", (0, 0, 255))
     ]
 
     button_width = 80
@@ -61,7 +65,12 @@ while True:
 
         text_color = (0, 0, 0)
 
-        if name in ["RED", "GREEN", "BLUE"]:
+        if name in [
+            "RED",
+            "GREEN",
+            "BLUE",
+            "CLEAR"
+        ]:
             text_color = (255, 255, 255)
 
         cv2.putText(
@@ -74,38 +83,26 @@ while True:
             1
         )
 
+    # ======================
     # HAND TRACKING
-    frame, x, y, is_drawing = tracker.detect(frame)
+    # ======================
 
+    frame, x, y, is_drawing = tracker.detect(
+        frame
+    )
+
+    # ======================
     # BUTTON SELECTION
+    # ======================
+
     if x is not None and y is not None:
 
         if y < TOOLBAR_HEIGHT:
 
             section = x // button_width
 
+            # SAVE
             if section == 0:
-                canvas.set_color((0, 0, 255))
-
-            elif section == 1:
-                canvas.set_color((0, 255, 0))
-
-            elif section == 2:
-                canvas.set_color((255, 0, 0))
-
-            elif section == 3:
-                canvas.set_color((0, 255, 255))
-
-            elif section == 4:
-                canvas.set_color((255, 255, 255))
-
-            elif section == 5:
-                canvas.set_eraser()
-
-            elif section == 6:
-                canvas.clear()
-
-            elif section == 7:
 
                 drawing = canvas.get_canvas()
 
@@ -136,21 +133,25 @@ while True:
                 )
 
                 print(
-                    f"Saved: {filename}"
+                    print(f"Solved: {expression}")
                 )
 
                 try:
 
-                    expression = ocr.read_equation(
-                        canvas_filename
+                    expression = (
+                        ocr.read_equation(
+                            canvas_filename
+                        )
                     )
 
                     print(
                         f"Detected: {expression}"
                     )
 
-                    answer = evaluator.solve(
-                        expression
+                    answer = (
+                        evaluator.solve(
+                            expression
+                        )
                     )
 
                     print(
@@ -165,20 +166,79 @@ while True:
 
                 save_count += 1
 
+            # CLEAR
+            elif section == 1:
+
+                canvas.clear()
+
+                expression = ""
+                answer = ""
+
+            # ERASER
+            elif section == 2:
+
+                canvas.set_eraser()
+
+            # WHITE
+            elif section == 3:
+
+                canvas.set_color(
+                    (255, 255, 255)
+                )
+
+            # YELLOW
+            elif section == 4:
+
+                canvas.set_color(
+                    (0, 255, 255)
+                )
+
+            # BLUE
+            elif section == 5:
+
+                canvas.set_color(
+                    (255, 0, 0)
+                )
+
+            # GREEN
+            elif section == 6:
+
+                canvas.set_color(
+                    (0, 255, 0)
+                )
+
+            # RED
+            elif section == 7:
+
+                canvas.set_color(
+                    (0, 0, 255)
+                )
+
             canvas.lift_pen()
 
-    # DRAW
+    # ======================
+    # DRAWING
+    # ======================
+
     if (
         x is not None and
         is_drawing and
         y > TOOLBAR_HEIGHT
     ):
-        canvas.draw(x, y)
+
+        canvas.draw(
+            x,
+            y
+        )
 
     else:
+
         canvas.lift_pen()
 
-    # MERGE
+    # ======================
+    # MERGE CANVAS
+    # ======================
+
     drawing = canvas.get_canvas()
 
     frame = cv2.addWeighted(
@@ -189,13 +249,22 @@ while True:
         0
     )
 
-    frame = display.show_answer(
+    # ======================
+    # INFO PANEL
+    # ======================
+
+    frame = display.show_info(
         frame,
+        expression,
         answer
     )
 
+    # ======================
+    # WINDOW TITLE
+    # ======================
+
     cv2.imshow(
-        "Smart Air Math Solver",
+        "Smart Air Canvas & Math Solver",
         frame
     )
 

@@ -1,5 +1,6 @@
 saved_drawings/
 processed.png
+test_ocr.py
 test_simple.py
 __pycache__/
-.vscode/
+*.pyc

@@ -11,11 +11,12 @@ class OCREngine:
         )
 
     def read_equation(self, image_path):
+
         results = self.reader.readtext(
-    image_path,
-    detail=0,
-    allowlist="0123456789+-*/="
-)
+            image_path,
+            detail=0,
+            allowlist="0123456789+-*/="
+        )
 
         text = "".join(results)
 
