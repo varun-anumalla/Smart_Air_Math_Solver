@@ -3,11 +3,19 @@ import os
 
 from modules.hand_tracker import HandTracker
 from modules.canvas import Canvas
+from modules.ocr_engine import OCREngine
+from modules.math_evaluator import MathEvaluator
+from modules.display import Display
 
 cap = cv2.VideoCapture(0)
 
 tracker = HandTracker()
 canvas = Canvas()
+ocr = OCREngine()
+evaluator = MathEvaluator()
+display = Display()
+
+answer = ""
 
 os.makedirs("saved_drawings", exist_ok=True)
 
@@ -131,6 +139,30 @@ while True:
                     f"Saved: {filename}"
                 )
 
+                try:
+
+                    expression = ocr.read_equation(
+                        canvas_filename
+                    )
+
+                    print(
+                        f"Detected: {expression}"
+                    )
+
+                    answer = evaluator.solve(
+                        expression
+                    )
+
+                    print(
+                        f"Answer: {answer}"
+                    )
+
+                except Exception as e:
+
+                    print(e)
+
+                    answer = "OCR Error"
+
                 save_count += 1
 
             canvas.lift_pen()
@@ -155,6 +187,11 @@ while True:
         drawing,
         1,
         0
+    )
+
+    frame = display.show_answer(
+        frame,
+        answer
     )
 
     cv2.imshow(
